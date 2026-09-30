@@ -2,21 +2,38 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>mfe-catalogo (modo independiente)</title>
+  <!-- Sistema de diseño del equipo Plataforma. Si el puerto 8085 no está
+       levantado, el 404 no rompe nada: cada token se usa con su respaldo. -->
+  <link rel="stylesheet" href="http://localhost:8085/tokens.css">
   <style>
-    body { font-family: Arial, sans-serif; margin: 24px; background: #fafafa; }
-    .banda { background: #fff3c4; padding: 8px 12px; margin-bottom: 16px; font-size: 13px; }
+    body { font-family: var(--sabor-fuente, Arial, sans-serif); margin: 24px;
+           background: var(--sabor-color-fondo, #fafafa);
+           color: var(--sabor-color-texto, #1f2a37); }
+    .banda { background: color-mix(in srgb, var(--sabor-color-acento, #f2c200) 22%, #fff);
+             color: var(--sabor-color-texto, #1f2a37);
+             padding: 8px 12px; margin-bottom: 16px; font-size: 13px;
+             border-radius: var(--sabor-radio, 6px); }
+    h3 { color: var(--sabor-color-primario, #0b4f8a); }
+    #eventos { font-family: Consolas, 'Courier New', monospace; font-size: 13px; }
   </style>
 </head>
 <body>
   <div class="banda">Modo independiente: el equipo de Catálogo prueba su micro frontend sin el contenedor.</div>
   <div id="raiz-local"></div>
-  <h3>Eventos publicados</h3>
+
+  <h3>Eventos publicados (contrato v1.1)</h3>
   <ul id="eventos"></ul>
 
   <script src="catalogo.js"></script>
   <script>
-    window.renderCatalogo('raiz-local');
+    // El contrato dice que renderCatalogo devuelve una Promise: esperamos a
+    // que Vue termine de descargar y el catálogo esté montado de verdad.
+    window.renderCatalogo('raiz-local').then(function (r) {
+      console.log('[demo] renderCatalogo resolvió →', r);
+    });
+
     // Simulamos a los "consumidores" del evento para verificar el contrato
     window.addEventListener('carrito:agregar', function (e) {
       const li = document.createElement('li');
